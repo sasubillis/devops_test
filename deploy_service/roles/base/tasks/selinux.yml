@@ -1,0 +1,3 @@
+---
+- name: Install Python bindings for SELinux
+  yum: name=libselinux-python state=present

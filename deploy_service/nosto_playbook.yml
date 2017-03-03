@@ -1,0 +1,14 @@
+---
+- hosts: all
+  roles:
+    - base
+    - nginx
+    - role: vhost
+      vhosts:
+        - name: nosto-webserver
+          port: 80 default
+          locations:
+            - path: /
+              proxy: 'http://localhost:8090'
+    - webapp
+

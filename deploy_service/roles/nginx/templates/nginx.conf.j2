@@ -1,0 +1,41 @@
+user  nginx;
+worker_processes  1;
+
+error_log  /var/log/nginx/error.log warn;
+
+{% if (ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS') and
+      (ansible_distribution_version | version_compare('7.0', '>=')) %}
+
+pid        /run/nginx.pid;
+
+{% else %}
+pid        /var/run/nginx.pid;
+{% endif %}
+
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    keepalive_timeout  6500;
+    proxy_connect_timeout       6000;
+    proxy_send_timeout          6000;
+    proxy_read_timeout          6000;
+    send_timeout                6000;
+
+    include /etc/nginx/conf.d/*.conf;
+}

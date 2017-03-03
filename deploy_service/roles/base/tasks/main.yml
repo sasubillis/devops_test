@@ -1,0 +1,14 @@
+---
+- include: selinux.yml tags=base,base-selinux
+- include: epel.yml tags=base,base-epel
+- include: pip.yml tags=base,base-pip
+- include: hostname.yml tags=base,base-hostname
+- include: hosts.yml tags=base,base-hosts
+- include: sshd.yml tags=base,base-sshd
+
+- name: "Install Common Libraries from CentOS mirror"
+  yum: state=present name="{{ item }}"
+  with_items:
+    - git
+    - wget
+    - lsof

@@ -1,0 +1,8 @@
+---
+- name: Enable EPEL repositories
+  yum: name=epel-release state=present
+  register: epel_install_result
+
+- name: clear yum cache
+  command: yum clean all
+  when: epel_install_result|changed

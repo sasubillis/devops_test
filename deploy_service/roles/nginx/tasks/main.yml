@@ -1,0 +1,14 @@
+---
+- include: nginx-centos6-repo.yml
+  when: >
+    (ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS') and
+    (ansible_distribution_version | version_compare('7.0', '<='))
+  tags: [nginx, nginx-repo]
+
+#- include: nginx-centos7-repo.yml
+#  when: >
+#    (ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS') and
+#    (ansible_distribution_version | version_compare('7.0', '>='))
+#  tags: [nginx, nginx-repo]
+
+- include: nginx.yml tags=nginx

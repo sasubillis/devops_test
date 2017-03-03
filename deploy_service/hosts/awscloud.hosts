@@ -1,0 +1,5 @@
+[awshost]
+awshost ansible_ssh_host=XX.XX.XX.XX
+
+[awscloud:children]
+awshost

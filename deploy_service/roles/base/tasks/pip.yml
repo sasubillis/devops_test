@@ -1,0 +1,4 @@
+---
+- name: Install pip in order to manage ansible python dependencies (pymongo etc)
+  yum: name=python-pip state=present
+

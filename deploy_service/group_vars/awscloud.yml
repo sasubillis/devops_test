@@ -1,0 +1,12 @@
+proxy:
+  no_proxy: .nosto,localhost,127.0.0.1,instance-data,169.254.169.254
+  project_domain: .nosto
+
+webapp:
+ githublink: https://github.com/sasubillis/simple_flask_app.git
+ webapps_dir: /root
+ app_name: flask_server 
+ version: nosto_test
+ refspec: '+refs/pull/*:refs/heads/*'
+ 
+

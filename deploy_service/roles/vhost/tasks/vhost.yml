@@ -1,0 +1,5 @@
+---
+- name: Create virtualhost "{{ item.name }}:{{ item.port}}"
+  template: src=server.conf.j2 dest=/etc/nginx/conf.d/{{ item.name }}.conf
+  with_items: "{{ vhosts }}"
+  notify: restart nginx

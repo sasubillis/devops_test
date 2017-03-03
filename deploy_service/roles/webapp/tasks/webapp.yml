@@ -1,0 +1,56 @@
+---
+- name: Install flask framework
+  pip: name=flask
+
+- name: Install supervisor framework
+  pip: name=supervisor
+
+- name: create the required config dir for supervisor
+  file: path=/etc/{{ item }} state=directory
+  with_items:
+    - supervisor
+
+- name: create the required config dir for supervisor
+  file: path=/var/log/{{ item }} state=directory
+  with_items:
+    - supervisor
+
+- stat: path=/var/log/supervisor/err.log
+  register: p
+
+- name: create /var/log/supervisor/err.log file
+  file: path=/var/log/supervisor/err.log
+        owner=root
+        group=root
+        state={{ "file" if  p.stat.exists else "touch"}}
+
+- stat: path=/var/log/supervisor/out.log
+  register: p
+
+- name: create /var/log/supervisor/out.log file
+  file: path=/var/log/supervisor/out.log
+        owner=root
+        group=root
+        state={{ "file" if  p.stat.exists else "touch"}}
+  
+- name: copy the supervisor configuration file 
+  template: src=supervisord.conf.j2 dest=/etc/supervisor/supervisord.conf
+
+- name: Start the supervisor daemon program
+  command: supervisord -c /etc/supervisor/supervisord.conf
+
+- name: Get the webserver application repo from github master branch
+  git:
+    repo: "{{ webapp.githublink }}"
+    dest: "{{ webapp.webapps_dir }}/{{ webapp.app_name }}" 
+    version: "{{ webapp.version }}"
+
+- name: restart flask app with supervisorctl
+  command: supervisorctl restart all
+
+- name: Test the flask web service is running or not
+  shell: "sleep 10 && wget http://localhost:8090"
+  register: _flask_service
+  failed_when: >
+    _flask_service.rc != 0 
+

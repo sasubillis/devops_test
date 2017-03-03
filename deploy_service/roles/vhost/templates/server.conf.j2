@@ -1,0 +1,33 @@
+server {
+  listen {{ item.port }};
+  server_name {{ item.name }};
+
+  client_max_body_size 0;
+  proxy_max_temp_file_size 0;
+
+  gzip            on;
+  gzip_min_length 1000;
+  gzip_proxied    any;
+  gzip_types      text/plain application/xml application/json;
+
+  {% for location in item.locations %}
+
+  location {{ location.path }} {
+    proxy_redirect   off;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Host              $http_host;
+    proxy_set_header X-Real-IP         $remote_addr;
+
+    proxy_pass {{ location.proxy }};
+  }
+
+  {% endfor %}
+
+  {% for location in item.static_locations|default([]) %}
+
+  location {{ location.path }} {
+    root {{ location.root }};
+  }
+
+  {% endfor %}
+}
